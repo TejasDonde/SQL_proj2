@@ -123,15 +123,7 @@ select * from team_performance
  --using a window function.In the stadium Old Trafford.
    select *, rank()  over ( order by total_goals desc) as rank from team_performance ;
 
---13) TOP 5 players who scored the most goals in Old Trafford, ensuring null values are not included
---in the result (especially pertinent for cases where a player might not have scored any goals).
-  ( select * from matches where stadium='Old Trafford');
-  select a.match_id,count(b.goal_id)as goals ,a.stadium from ( select * from matches where stadium='Old Trafford') as a 
-  left join goals as b on a.match_id=b.match_id group by 1,3 ;
-
-   select match_id,count(pid)  from goals group by 1 order by count desc;
-/* remaining */
---14)Write a query to list all players along with the total number of goals they have scored.Order the
+--13)Write a query to list all players along with the total number of goals they have scored.Order the
 --results by the number of goals scored in descending order to easily identify the top 6 scorers.
 
 select a.player_id,a.first_name,a.last_name,count(b.goal_id)as goals from players as a left join goals as b on
@@ -140,7 +132,7 @@ a.player_id=b.pid group by 1,2,3 order by 4 desc;
 select a.player_id,a.first_name,a.last_name,count(b.goal_id)as goals from players as a left join goals as b on
 a.player_id=b.pid group by 1,2,3 order by 4 desc limit 6 ;
 
-/* 15)Identify the Top Scorer for Each Team - Find the player from each team who has scored the most
+/* 14)Identify the Top Scorer for Each Team - Find the player from each team who has scored the most
   goals in all matches combined. This question requires joining the Players, Goals, and possibly the
   Matches tables, and then using a subquery to aggregate goals by players and teams.*/
   
@@ -163,7 +155,7 @@ top_scorer as (select *, rank() over (partition by team order by total_goals des
      from player_goals)
 	 select * from top_scorer where rank=1;
 
-/*16)Find the Total Number of Goals Scored in the Latest Season - Calculate the total number of goals
+/*15)Find the Total Number of Goals Scored in the Latest Season - Calculate the total number of goals
 scored in the latest season available in the dataset. This question involves using a subquery 
 to first identify the latest season from the Matches table, then summing the goals from 
 the Goals table that occurred in matches from that season.	*/
@@ -180,14 +172,14 @@ with latest_season as ( select a.match_id,count(a.goal_id)as total_goals,b.seaso
    (select * from matches where season=(select max(season) from matches)) as b on a.match_id=b.match_id
     group by 1,3), tot_ses_goal as ( select sum(total_goals)as total_goals from latest_season)
 	select * from tot_ses_goal;
-/*17)Find Matches with Above Average Attendance - Retrieve a list of matches that had an attendance
+/*16)Find Matches with Above Average Attendance - Retrieve a list of matches that had an attendance
      higher than the average attendance across all matches. This question requires a subquery to
 	 calculate the average attendance first, then use it to filter matches.*/
   ---Avg Attendance
 	select avg(attendance) from matches;
 	select match_id,attendance from matches where attendance>=(select avg(attendance) from matches);
 
-/*18)Find the Number of Matches Played Each Month - Count how many matches were played in each month
+/*17)Find the Number of Matches Played Each Month - Count how many matches were played in each month
      across all seasons. This question requires extracting the month from the match dates and grouping
 	 the results by this value. as January Feb march*/
 	--extracting month_no from date 
